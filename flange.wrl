@@ -1,0 +1,96 @@
+#VRML V2.0 utf8
+
+WorldInfo {
+  title "Flange with bolt holes"
+}
+
+# Flange Ring
+Transform {
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.6 0.6 0.6
+        }
+      }
+      geometry Cylinder {
+        height 0.2
+        radius 1.2
+      }
+    }
+  ]
+}
+
+# Center Hole (cutout effect not visible in VRML alone, symbolic only)
+Transform {
+  translation 0 0 0.01
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.2 0.2 0.2
+          transparency 1.0  # Invisible to simulate a hole
+        }
+      }
+      geometry Cylinder {
+        height 0.3
+        radius 0.5
+      }
+    }
+  ]
+}
+
+# 4 Bolt Holes as black spheres for simplicity
+Transform {
+  translation 0.8 0 0.15
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0 0 0
+        }
+      }
+      geometry Sphere { radius 0.05 }
+    }
+  ]
+}
+Transform {
+  translation -0.8 0 0.15
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0 0 0
+        }
+      }
+      geometry Sphere { radius 0.05 }
+    }
+  ]
+}
+Transform {
+  translation 0 0.8 0.15
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0 0 0
+        }
+      }
+      geometry Sphere { radius 0.05 }
+    }
+  ]
+}
+Transform {
+  translation 0 -0.8 0.15
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0 0 0
+        }
+      }
+      geometry Sphere { radius 0.05 }
+    }
+  ]
+}
+
