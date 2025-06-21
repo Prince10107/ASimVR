@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VRML Viewer (with X_ITE)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden; /* Hide scrollbar */
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        x3d-canvas {
+            display: block;
+            width: 100%;
+            height: calc(100vh - 80px); /* Leave some space for the message box */
+            border-radius: 12px; /* Rounded corners */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            background-color: #ffffff; /* Canvas background */
+            /* To override X_ITE's own default styles */
+            --x3d-canvas-background: transparent;
+        }
+        #message-box {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            font-size: 0.9em;
+            color: #333;
+            text-align: center;
+        }
+        #message-box.show {
+            opacity: 1;
+        }
+    </style>
+    <!-- Load X_ITE library from CDN as an ES module -->
+    <script type="module">
+        import X3D from "https://cdn.jsdelivr.net/npm/x_ite@11.5.10/dist/x_ite.min.mjs";
+        // The X3D object doesn't need to be explicitly used; its mere presence is sufficient
+    </script>
+</head>
+<body>
+
+    <div id="message-box"></div>
+
+    <!-- Use the x3d-canvas element to load the VRML model -->
+    <!-- Specify the path to your VRML file in the src attribute -->
+    <x3d-canvas id="vrmlViewer" src="./flange.wrl" antialias="true" showLog="false"></x3d-canvas>
+    <!-- You can change this to './model.wrl' if you prefer -->
+
+    <script type="module">
+        // Function to show transient messages to the user
+        const showMessage = (message, duration = 3000) => {
+            const msgBox = document.getElementById('message-box');
+            msgBox.textContent = message;
+            msgBox.classList.add('show');
+            setTimeout(() => {
+                msgBox.classList.remove('show');
+            }, duration);
+        };
+
+        // Listen for the model to be loaded
+        const vrmlViewer = document.getElementById('vrmlViewer');
+
+        // Triggered when the model is loaded and ready
+        vrmlViewer.addEventListener('load', () => {
+            showMessage('VRML model loaded successfully! You can control the model with your mouse.', 5000);
+            console.log('X_ITE: VRML model loaded.');
+        });
+
+        // Triggered when an error occurs during model loading
+        vrmlViewer.addEventListener('error', (event) => {
+            console.error('X_ITE: Error loading VRML model:', event);
+            showMessage('Error loading VRML model! Please check the file path and format.', 7000);
+        });
+
+        // Show message when the page is loaded
+        window.onload = function() {
+            showMessage('Loading VRML model...', 5000);
+        };
+    </script>
+</body>
+</html>
