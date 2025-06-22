@@ -1,14 +1,10 @@
 #VRML V2.0 utf8
 
-# Component and Profile declarations can help some viewers:
+# Component and Profile declarations
 # component USE_RigidBodies 1
 # component USE_Shaders 1
 # component USE_Scripting 1
 # profile Interactive
-
-# This VRML file defines a 3D model of a Chemical Reactor.
-# It includes a main cylindrical vessel, various pipes, an agitator,
-# and sensors, all colored and positioned appropriately.
 
 WorldInfo {
   title "ASimVR Polymerization CSTR Reactor"
@@ -38,52 +34,44 @@ PROTO Valve [
   }
 }
 
-# Define reusable materials for different parts of the reactor
-# Material for the main reactor vessel (light blue/cyan)
 DEF REACTOR_BODY_MATERIAL Material {
   diffuseColor 0.6 0.8 0.9
   specularColor 0.8 0.8 0.8
   shininess 0.1
 }
 
-# Material for pipes (darker grey)
 DEF PIPE_MATERIAL Material {
   diffuseColor 0.4 0.4 0.4
   specularColor 0.7 0.7 0.7
   shininess 0.1
 }
 
-# Material for agitator blades (red)
 DEF AGITATOR_BLADE_MATERIAL Material {
   diffuseColor 0.8 0.2 0.2
   specularColor 0.9 0.9 0.9
   shininess 0.1
 }
 
-# Material for agitator shaft (yellow)
 DEF AGITATOR_SHAFT_MATERIAL Material {
   diffuseColor 0.9 0.9 0.0
   specularColor 0.9 0.9 0.9
   shininess 0.1
 }
 
-# Material for sensors (green)
 DEF SENSOR_MATERIAL Material {
   diffuseColor 0.2 0.7 0.2
   specularColor 0.8 0.8 0.8
   shininess 0.1
 }
 
-# Material for base (dark grey)
 DEF BASE_MATERIAL Material {
   diffuseColor 0.3 0.3 0.3
   specularColor 0.6 0.6 0.6
   shininess 0.1
 }
 
-# Drain Funnel Cone for Geometry Variety
 DEF DRAIN_CONE Transform {
-  translation 0 -3.3 0  # Positioned just below the base
+  translation 0 -3.3 0
   children [
     Shape {
       appearance Appearance {
@@ -97,9 +85,8 @@ DEF DRAIN_CONE Transform {
   ]
 }
 
-# Main Reactor Body
 DEF REACTOR_BODY Transform {
-  translation 0 0 0 # Centered at origin
+  translation 0 0 0
   children [
     Shape {
       appearance Appearance {
@@ -109,57 +96,54 @@ DEF REACTOR_BODY Transform {
         }
       }
       geometry Cylinder {
-        height 5.0 # Height of the cylinder
-        radius 2.0 # Radius of the cylinder
+        height 5.0
+        radius 2.0
       }
     }
   ]
 }
 
-# Agitator (inside the reactor)
 DEF AGITATOR Transform {
-  translation 0 1 0 # Positioned inside the reactor, slightly above center
+  translation 0 1 0
   children [
-    # Agitator Shaft
     Transform {
-      translation 0 1.5 0 # Position of the shaft relative to agitator
+      translation 0 1.5 0
       children [
         Shape {
           appearance Appearance {
-            material USE AGITATOR_SHAFT_MATERIAL # Use the defined material
+            material USE AGITATOR_SHAFT_MATERIAL
           }
           geometry Cylinder {
-            height 3.0 # Height of the shaft
-            radius 0.1 # Radius of the shaft
-          }
-        }
-      ]
-    }
-    # Agitator Blades (example: two simple box blades)
-    Transform {
-      translation 0 0 0 # Position of the first blade
-      rotation 0 1 0 0.785 # Rotate to make them visible
-      children [
-        Shape {
-          appearance Appearance {
-            material USE AGITATOR_BLADE_MATERIAL # Use the defined material
-          }
-          geometry Box {
-            size 1.5 0.1 0.5 # Size of the blade (length, thickness, width)
+            height 3.0
+            radius 0.1
           }
         }
       ]
     }
     Transform {
-      translation 0 0 0 # Position of the second blade
-      rotation 0 1 0 2.356 # Rotate for the second blade
+      translation 0 0 0
+      rotation 0 1 0 0.785
       children [
         Shape {
           appearance Appearance {
-            material USE AGITATOR_BLADE_MATERIAL # Use the defined material
+            material USE AGITATOR_BLADE_MATERIAL
           }
           geometry Box {
-            size 1.5 0.1 0.5 # Size of the blade
+            size 1.5 0.1 0.5
+          }
+        }
+      ]
+    }
+    Transform {
+      translation 0 0 0
+      rotation 0 1 0 2.356
+      children [
+        Shape {
+          appearance Appearance {
+            material USE AGITATOR_BLADE_MATERIAL
+          }
+          geometry Box {
+            size 1.5 0.1 0.5
           }
         }
       ]
@@ -185,17 +169,14 @@ DEF LIQUID Transform {
   ]
 }
 
-# Inlet Pipe (top)
 DEF INLET_PIPE Transform {
-  translation -2.0 2.0 0 # Positioned near the top of the reactor
-  rotation 0 0 1 1.57 # Rotate to be horizontal
+  translation -2.0 2.0 0
+  rotation 0 0 1 1.57
   children [
-    
     Valve {
       position 0 0 0.5
       size 0.15
     }
-
     Shape {
       appearance Appearance {
         material USE PIPE_MATERIAL
@@ -205,7 +186,6 @@ DEF INLET_PIPE Transform {
         radius 0.2
       }
     }
-
     Transform {
       translation 0 0 0.5
       children [
@@ -234,17 +214,14 @@ DEF VALVE_KNOB Transform {
   ]
 }
 
-# Outlet Pipe (bottom)
 DEF OUTLET_PIPE Transform {
   translation 2.0 -2.0 0
   rotation 0 0 1 1.57
   children [
-
     Valve {
       position 0 0 -0.6
       size 0.15
     }
-
     Shape {
       appearance Appearance {
         material USE PIPE_MATERIAL
@@ -254,7 +231,6 @@ DEF OUTLET_PIPE Transform {
         radius 0.2
       }
     }
-
     Transform {
       translation 0 0 -0.6
       children [
@@ -271,19 +247,17 @@ DEF OUTLET_PIPE Transform {
   ]
 }
 
-# Temperature Sensor (side)
 DEF TEMP_SENSOR Transform {
-  translation 0 0 2.2 # Positioned on the side of the reactor
+  translation 0 0 2.2
   children [
     Shape {
       appearance Appearance {
-        material USE SENSOR_MATERIAL # Use the defined material
+        material USE SENSOR_MATERIAL
       }
       geometry Sphere {
-        radius 0.2 # Size of the sensor
+        radius 0.2
       }
     }
-    # A small cylindrical probe extending into the reactor
     Transform {
       translation 0 0 -0.5
       children [
@@ -301,40 +275,56 @@ DEF TEMP_SENSOR Transform {
   ]
 }
 
-# Pressure Sensor (top)
+DEF SENSOR_HOUSING Transform {
+  translation 0 0 2.2
+  children [
+    Inline {
+      url "https://raw.githubusercontent.com/Prince10107/ASimVR/main/housing.wrl"
+    }
+  ]
+}
+
 DEF PRESS_SENSOR Transform {
-  translation 0 2.7 0 # Positioned on top of the reactor
+  translation 0 2.7 0
   children [
     Shape {
       appearance Appearance {
-        material USE SENSOR_MATERIAL # Use the defined material
+        material USE SENSOR_MATERIAL
       }
       geometry Box {
-        size 0.4 0.4 0.4 # Size of the sensor
+        size 0.4 0.4 0.4
       }
     }
   ]
 }
 
-# Reactor Base (a simple cylinder)
-DEF REACTOR_BASE Transform {
-  translation 0 -2.7 0 # Positioned below the reactor body
+# Simple base (commented out, use detailed base instead)
+# DEF REACTOR_BASE Transform {
+#   translation 0 -2.7 0
+#   children [
+#     Shape {
+#       appearance Appearance {
+#         material USE BASE_MATERIAL
+#       }
+#       geometry Cylinder {
+#         height 0.4
+#         radius 2.5
+#       }
+#     }
+#   ]
+# }
+
+DEF REACTOR_BASE_DETAILED Transform {
+  translation 0 -2.7 0
   children [
-    Shape {
-      appearance Appearance {
-        material USE BASE_MATERIAL # Use the defined material
-      }
-      geometry Cylinder {
-        height 0.4 # Height of the base
-        radius 2.5 # Radius of the base, slightly wider than reactor
-      }
+    Inline {
+      url "https://raw.githubusercontent.com/Prince10107/ASimVR/main/base.wrl"
     }
   ]
 }
 
-# Flange positioned near the bottom/base of the reactor
 DEF FLANGE Transform {
-  translation 0 -2.5 0  
+  translation 0 -2.5 0
   children [
     Inline {
       url "https://raw.githubusercontent.com/Prince10107/ASimVR/main/flange.wrl"
@@ -342,15 +332,13 @@ DEF FLANGE Transform {
   ]
 }
 
-# Add a default viewpoint for initial camera position
 DEF INITIAL_VIEWPOINT Viewpoint {
-  position 0 0 50.0    #In case of the model is too big
+  position 0 0 50.0
   orientation 0 0 1 0
   fieldOfView 0.785398
   description "Initial View"
 }
 
-# Proximity sensor for interaction
 DEF REACTOR_PROXIMITY ProximitySensor {
   size 10 10 10
   center 0 0 0
@@ -363,30 +351,5 @@ DEF REACTOR_TRANSPARENCY_SWITCH Script {
     function set_transparency(value) {
       if (value) transparency_changed = 0.7;
       else transparency_changed = 0.0;
-        }"
-
-}
-
-PROTO Valve [
-  field SFVec3f position 0 0 0
-  field SFFloat size 0.15
-]
-{
-  Transform {
-    translation IS position
-    children [
-      Shape {
-        appearance Appearance {
-          material Material {
-            diffuseColor 0.9 0.5 0.1
-            specularColor 1 1 1
-            shininess 0.2
-          }
-        }
-        geometry Sphere {
-          radius IS size
-        }
-      }
-    ]
-  }
+    }"
 }
