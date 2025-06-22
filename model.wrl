@@ -1,11 +1,41 @@
 #VRML V2.0 utf8
 
+# Component and Profile declarations can help some viewers:
+# component USE_RigidBodies 1
+# component USE_Shaders 1
+# component USE_Scripting 1
+# profile Interactive
+
 # This VRML file defines a 3D model of a Chemical Reactor.
 # It includes a main cylindrical vessel, various pipes, an agitator,
 # and sensors, all colored and positioned appropriately.
 
 WorldInfo {
   title "ASimVR Polymerization CSTR Reactor"
+}
+
+PROTO Valve [
+  field SFVec3f position 0 0 0
+  field SFFloat size 0.15
+]
+{
+  Transform {
+    translation IS position
+    children [
+      Shape {
+        appearance Appearance {
+          material Material {
+            diffuseColor 0.9 0.5 0.1
+            specularColor 1 1 1
+            shininess 0.2
+          }
+        }
+        geometry Sphere {
+          radius IS size
+        }
+      }
+    ]
+  }
 }
 
 # Define reusable materials for different parts of the reactor
@@ -307,7 +337,7 @@ DEF FLANGE Transform {
   translation 0 -2.5 0  
   children [
     Inline {
-      url "flange.wrl"
+      url "https://raw.githubusercontent.com/Prince10107/ASimVR/main/flange.wrl"
     }
   ]
 }
@@ -333,7 +363,8 @@ DEF REACTOR_TRANSPARENCY_SWITCH Script {
     function set_transparency(value) {
       if (value) transparency_changed = 0.7;
       else transparency_changed = 0.0;
-    }"
+        }"
+
 }
 
 PROTO Valve [
@@ -359,5 +390,3 @@ PROTO Valve [
     ]
   }
 }
-
-
