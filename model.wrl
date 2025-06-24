@@ -85,23 +85,33 @@ DEF DRAIN_CONE Transform {
   ]
 }
 
-DEF REACTOR_BODY Transform {
-  translation 0 0 0
-  children [
-    Shape {
-      appearance Appearance {
-        material USE REACTOR_BODY_MATERIAL
-        texture ImageTexture {
-          url "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wCEAAkGBxAQEhIQEBAQEBAQEBAPEBEQDxAPDw8PFREWFhURExMYHSggGBolHRUTITEhJSkrLi4uFx8zODMsNygtLisBCgoKDg0OFQ8PFSsZFRkrKy0rKystKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrK//AABEIAKgBLAMBIgACEQEDEQH/xAAUAAEAAAAAAAAAAAAAAAAAAAAJ/8QAFhABAQEAAAAAAAAAAAAAAAAAAQID/9oADAMBAAIQAxAAAAHt//8QAFBABAAAAAAAAAAAAAAAAAAAAX/2gAIAQEAAQUC//8QAFBABAAAAAAAAAAAAAAAAAAAAX/2gAIAQMBAT8B/8QAFBABAAAAAAAAAAAAAAAAAAAAX/2gAIAQIBAT8B/9k="
+# Reactor Body as a PROTO for Simulink connectivity
+PROTO DynamicReactorBody [
+  field SFColor reactor_color_input 0.6 0.8 0.9
+  field SFFloat reactor_transparency_input 0.0
+]
+{
+  Transform {
+    translation 0 0 0
+    children [
+      Shape {
+        appearance Appearance {
+          material Material {
+            diffuseColor IS reactor_color_input
+            transparency IS reactor_transparency_input
+            specularColor 0.8 0.8 0.8
+            shininess 0.1
+          }
+        }
+        geometry Cylinder {
+          height 5.0
+          radius 2.0
         }
       }
-      geometry Cylinder {
-        height 5.0
-        radius 2.0
-      }
-    }
-  ]
+    ]
+  }
 }
+
 
 DEF AGITATOR Transform {
   translation 0 1 0
