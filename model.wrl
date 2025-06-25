@@ -147,7 +147,7 @@ DEF TEMP_SENSOR Transform {
 # Inline nodes are used to include other VRML files (housing, base, flange) into this main scene.
 # IMPORTANT: These URLs must point to publicly accessible raw content on GitHub.
 # Since Melda is updating both repos, these URLs can point to either her repo or Prince's.
-# For consistency, we will keep them pointing to Prince's as that was the original structure.
+# For consistency and original structure, we keep them pointing to Prince's repo.
 DEF SENSOR_HOUSING Transform { translation 0 0 2.2 children [ Inline { url "https://raw.githubusercontent.com/Prince10107/ASimVR/main/housing.wrl" } ] }
 
 DEF PRESS_SENSOR Transform {
@@ -167,8 +167,8 @@ DEF FLANGE Transform { translation 0 -2.5 0 children [ Inline { url "https://raw
 DEF INITIAL_VIEWPOINT Viewpoint { position 0 0 50.0 orientation 0 0 1 0 fieldOfView 0.785398 description "Initial View" }
 # ProximitySensor can detect when the user's viewpoint enters/leaves a defined region.
 DEF REACTOR_PROXIMITY ProximitySensor { size 10 10 10 center 0 0 0 }
-# This Script node is an example of VRML-internal scripting, not directly used by Simulink VR Sink.
-# It demonstrates VRML's own scripting capabilities.
+# This Script node is an example of VRML-internal scripting, not directly used by Simulink VR Sink,
+# but shows how VRML itself can react to internal events.
 DEF REACTOR_TRANSPARENCY_SWITCH Script { eventIn SFBool set_transparency eventOut SFFloat transparency_changed url "javascript: function set_transparency(value) { if (value) transparency_changed = 0.7; else transparency_changed = 0.0; }" }
 
 # --- ROUTING STATEMENTS (CRITICAL for Simulink Connectivity) ---
