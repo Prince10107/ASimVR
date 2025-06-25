@@ -13,177 +13,158 @@
 # component USE_Scripting 1
 # profile Interactive
 
-WorldInfo {
-  title "ASimVR Polymerization CSTR Reactor"
-  info [ "Designed for dynamic simulation with MATLAB/Simulink VR Sink." ]
-}
-
-# --- TOP-LEVEL FIELDS (Inputs from Simulink via VR Sink) ---
-# IMPORTANT: These are 'field' declarations, NOT 'eventIn'.
-# 'field' allows Simulink's VR Sink to directly control these properties.
-# These names (e.g., 'reactor_color_input_simulink') are what Allan will use in Simulink
-# when configuring the VR Sink block to send data to the VRML model.
-field SFColor reactor_color_input_simulink 0.6 0.8 0.9      # Controls reactor body color (default: light blue)
-field SFFloat reactor_transparency_input_simulink 0.0     # Controls reactor body transparency (default: opaque)
-field SFVec3f liquid_level_input_simulink 0 -1 0          # Controls liquid level/position (default: mid-level)
-field SFFloat liquid_transparency_input_simulink 0.5     # Controls liquid transparency (default: semi-transparent)
-field SFRotation agitator_rotation_input_simulink 0 1 0 0 # Controls agitator rotation (default: no rotation)
-field SFRotation valve_knob_rotation_input_simulink 0 1 0 0 # Controls valve knob rotation (default: no rotation)
-field SFVec3f temp_sensor_scale_input_simulink 1 1 1      # Controls temperature sensor scale (default: original size)
-field SFVec3f press_sensor_scale_input_simulink 1 1 1     # Controls pressure sensor scale (default: original size)
-
-# --- Common PROTO Definitions ---
-# PROTOTYPE (PROTO) definitions allow for reusable components within the VRML scene.
-PROTO Valve [ # Reusable Valve component
-  field SFVec3f position 0 0 0
-  field SFFloat size 0.15
-]
-{
-  Transform { translation IS position children [ Shape { appearance Appearance { material Material { diffuseColor 0.9 0.5 0.1 specularColor 1 1 1 shininess 0.2 } } geometry Sphere { radius IS size } } ] }
-}
-
-# --- Material Definitions ---
-# Centralized material definitions (using DEF/USE) for consistency and easier modification
-# across multiple objects in the scene.
-DEF REACTOR_BODY_MATERIAL Material { diffuseColor 0.6 0.8 0.9 specularColor 0.8 0.8 0.8 shininess 0.1 }
-DEF PIPE_MATERIAL Material { diffuseColor 0.4 0.4 0.4 specularColor 0.7 0.7 0.7 shininess 0.1 }
-DEF AGITATOR_BLADE_MATERIAL Material { diffuseColor 0.8 0.2 0.2 specularColor 0.9 0.9 0.9 shininess 0.1 }
-DEF AGITATOR_SHAFT_MATERIAL Material { diffuseColor 0.9 0.9 0.0 specularColor 0.9 0.9 0.9 shininess 0.1 }
-DEF SENSOR_MATERIAL Material { diffuseColor 0.2 0.7 0.2 specularColor 0.8 0.8 0.8 shininess 0.1 }
-DEF BASE_MATERIAL Material { diffuseColor 0.3 0.3 0.3 specularColor 0.6 0.6 0.6 shininess 0.1 }
-
-# --- Basic Geometries ---
-# Defines the cone shape for the reactor's drain.
-DEF DRAIN_CONE Transform { translation 0 -3.3 0 children [ Shape { appearance Appearance { material USE PIPE_MATERIAL } } geometry Cone { bottomRadius 0.4 height 0.8 } ] }
-
-# --- PROTO Definition for Dynamic Reactor Body ---
-# This PROTO defines the main reactor cylinder, allowing its color and transparency
-# to be controlled dynamically through input fields.
-PROTO DynamicReactorBody [
-  field SFColor reactor_color_input 0.6 0.8 0.9        # Input field for reactor color
-  field SFFloat reactor_transparency_input 0.0       # Input field for reactor transparency
-]
-{
-  Transform {
-    translation 0 0 0
+# --- CRITICAL FIX: ENTIRE VRML CONTENT WRAPPED IN AN X3D TAG ---
+# This wrapper is essential for X_ITE viewer in an HTML context to correctly
+# interpret 'field' definitions at the top-level of the scene.
+# It resolves the "Unknown node type or proto 'field'" error.
+X3D {
+  scene DEF SceneRoot Scene {
     children [
-      Shape {
-        appearance Appearance {
-          # Define (DEF) the material node within the PROTO so its properties can be ROUTEd to.
-          material DEF DYNAMIC_REACTOR_BODY_MATERIAL_NODE Material {
-            diffuseColor IS reactor_color_input       # 'IS' connects to the PROTO's color input
-            transparency IS reactor_transparency_input  # 'IS' connects to the PROTO's transparency input
-            specularColor 0.8 0.8 0.8 shininess 0.1
-          }
-        }
-        geometry Cylinder { height 5.0 radius 2.0 }
+      WorldInfo {
+        title "ASimVR Polymerization CSTR Reactor"
+        info [ "Designed for dynamic simulation with MATLAB/Simulink VR Sink." ]
       }
+
+      # --- TOP-LEVEL FIELDS (Inputs from Simulink via VR Sink) ---
+      # CORRECTION FOR "Expected ']'" ERROR:
+      # SFColor and SFFloat default values are now explicitly enclosed in square brackets [ ].
+      # This satisfies stricter X3D parsers.
+      field SFColor reactor_color_input_simulink [0.6 0.8 0.9]      # Controls reactor body color (default: light blue)
+      field SFFloat reactor_transparency_input_simulink [0.0]     # Controls reactor body transparency (default: opaque)
+      field SFVec3f liquid_level_input_simulink [0 -1 0]          # Controls liquid level/position (default: mid-level)
+      field SFFloat liquid_transparency_input_simulink [0.5]     # Controls liquid transparency (default: semi-transparent)
+      field SFRotation agitator_rotation_input_simulink [0 1 0 0] # Controls agitator rotation (default: no rotation)
+      field SFRotation valve_knob_rotation_input_simulink [0 1 0 0] # Controls valve knob rotation (default: no rotation)
+      field SFVec3f temp_sensor_scale_input_simulink [1 1 1]      # Controls temperature sensor scale (default: original size)
+      field SFVec3f press_sensor_scale_input_simulink [1 1 1]     # Controls pressure sensor scale (default: original size)
+
+      # --- Common PROTO Definitions ---
+      PROTO Valve [ # Reusable Valve component
+        field SFVec3f position [0 0 0]
+        field SFFloat size [0.15]
+      ]
+      {
+        Transform { translation IS position children [ Shape { appearance Appearance { material Material { diffuseColor 0.9 0.5 0.1 specularColor 1 1 1 shininess 0.2 } } geometry Sphere { radius IS size } } ] }
+      }
+
+      # --- Material Definitions ---
+      DEF REACTOR_BODY_MATERIAL Material { diffuseColor 0.6 0.8 0.9 specularColor 0.8 0.8 0.8 shininess 0.1 }
+      DEF PIPE_MATERIAL Material { diffuseColor 0.4 0.4 0.4 specularColor 0.7 0.7 0.7 shininess 0.1 }
+      DEF AGITATOR_BLADE_MATERIAL Material { diffuseColor 0.8 0.2 0.2 specularColor 0.9 0.9 0.9 shininess 0.1 }
+      DEF AGITATOR_SHAFT_MATERIAL Material { diffuseColor 0.9 0.9 0.0 specularColor 0.9 0.9 0.9 shininess 0.1 }
+      DEF SENSOR_MATERIAL Material { diffuseColor 0.2 0.7 0.2 specularColor 0.8 0.8 0.8 shininess 0.1 }
+      DEF BASE_MATERIAL Material { diffuseColor 0.3 0.3 0.3 specularColor 0.6 0.6 0.6 shininess 0.1 }
+
+      # --- Basic Geometries ---
+      DEF DRAIN_CONE Transform { translation [0 -3.3 0] children [ Shape { appearance Appearance { material USE PIPE_MATERIAL } } geometry Cone { bottomRadius 0.4 height 0.8 } ] }
+
+      # --- PROTO Definition for Dynamic Reactor Body ---
+      PROTO DynamicReactorBody [
+        field SFColor reactor_color_input [0.6 0.8 0.9]
+        field SFFloat reactor_transparency_input [0.0]
+      ]
+      {
+        Transform {
+          translation [0 0 0]
+          children [
+            Shape {
+              appearance Appearance {
+                material DEF DYNAMIC_REACTOR_BODY_MATERIAL_NODE Material {
+                  diffuseColor IS reactor_color_input
+                  transparency IS reactor_transparency_input
+                  specularColor 0.8 0.8 0.8 shininess 0.1
+                }
+              }
+              geometry Cylinder { height 5.0 radius 2.0 }
+            }
+          ]
+        }
+      }
+
+      # --- REACTOR BODY INSTANTIATION ---
+      DEF REACTOR_BODY_INSTANCE DynamicReactorBody { }
+
+      # --- AGITATOR (Mixer) ---
+      DEF AGITATOR Transform {
+        translation [0 1 0]
+        rotation [0 1 0 0]
+        children [
+          Transform { translation [0 1.5 0] children [ Shape { appearance Appearance { material USE AGITATOR_SHAFT_MATERIAL } geometry Cylinder { height 3.0 radius 0.1 } } ] }
+          Transform { translation [0 0 0] rotation [0 1 0 0.785] children [ Shape { appearance Appearance { material USE AGITATOR_BLADE_MATERIAL } geometry Box { size 1.5 0.1 0.5 } } ] }
+          Transform { translation [0 0 0] rotation [0 1 0 2.356] children [ Shape { appearance Appearance { material USE AGITATOR_BLADE_MATERIAL } geometry Box { size 1.5 0.1 0.5 } } ] }
+        ]
+      }
+
+      # --- LIQUID (Inside Reactor) ---
+      DEF LIQUID Transform {
+        translation [0 -1 0]
+        children [
+          Shape {
+            appearance Appearance {
+              material DEF LIQUID_MATERIAL_NODE Material {
+                diffuseColor 0.2 0.6 1.0
+                transparency 0.5
+              }
+            }
+            geometry Cylinder { height 2.0 radius 1.9 }
+          }
+        ]
+      }
+
+      # --- PIPES and VALVES ---
+      DEF INLET_PIPE Transform { translation [-2.0 2.0 0] rotation [0 0 1 1.57] children [ Valve { position [0 0 0.5] size [0.15] } Shape { appearance Appearance { material USE PIPE_MATERIAL } geometry Cylinder { height 1.0 radius 0.2 } } Transform { translation [0 0 0.5] children [ Shape { appearance Appearance { material USE PIPE_MATERIAL } geometry Sphere { radius 0.15 } } ] } ] }
+
+      # --- VALVE KNOB ---
+      DEF VALVE_KNOB Transform {
+        translation [-2.0 2.8 0]
+        rotation [0 1 0 0]
+        children [ Shape { appearance Appearance { material USE PIPE_MATERIAL } geometry Sphere { radius 0.2 } } ]
+      }
+
+      DEF OUTLET_PIPE Transform { translation [2.0 -2.0 0] rotation [0 0 1 1.57] children [ Valve { position [0 0 -0.6] size [0.15] } Shape { appearance Appearance { material USE PIPE_MATERIAL } geometry Cylinder { height 1.0 radius 0.2 } } Transform { translation [0 0 -0.6] children [ Shape { appearance Appearance { material USE PIPE_MATERIAL } geometry Sphere { radius 0.15 } } ] } ] }
+
+      # --- SENSORS ---
+      DEF TEMP_SENSOR Transform {
+        translation [0 0 2.2]
+        scale [1 1 1]
+        children [
+          Shape { appearance Appearance { material USE SENSOR_MATERIAL } geometry Sphere { radius 0.2 } }
+          Transform { translation [0 0 -0.5] children [ Shape { appearance Appearance { material USE SENSOR_MATERIAL } geometry Cylinder { height 1.0 radius 0.05 } } ] }
+        ]
+      }
+
+      # Inline nodes are used to include other VRML files (housing, base, flange) into this main scene.
+      # They are configured to point to Prince's repository as per original project structure.
+      DEF SENSOR_HOUSING Transform { translation [0 0 2.2] children [ Inline { url "https://raw.githubusercontent.com/Prince10107/ASimVR/main/housing.wrl" } ] }
+
+      DEF PRESS_SENSOR Transform {
+        translation [0 2.7 0]
+        scale [1 1 1]
+        children [ Shape { appearance Appearance { material USE SENSOR_MATERIAL } geometry Box { size 0.4 0.4 0.4 } } ]
+      }
+
+      # --- BASE ELEMENTS ---
+      DEF REACTOR_BASE Transform { translation [0 -2.7 0] children [ Shape { appearance Appearance { material USE BASE_MATERIAL } geometry Cylinder { height 0.4 radius 2.5 } } ] }
+      DEF REACTOR_BASE_DETAILED Transform { translation [0 -2.7 0] children [ Inline { url "https://raw.githubusercontent.com/Prince10107/ASimVR/main/base.wrl" } ] }
+      DEF FLANGE Transform { translation [0 -2.5 0] children [ Inline { url "https://raw.githubusercontent.com/Prince10107/ASimVR/main/flange.wrl" } ] }
+
+      # --- VIEWPOINT & MISC ---
+      DEF INITIAL_VIEWPOINT Viewpoint { position [0 0 50.0] orientation [0 0 1 0] fieldOfView 0.785398 description "Initial View" }
+      DEF REACTOR_PROXIMITY ProximitySensor { size [10 10 10] center [0 0 0] }
+      DEF REACTOR_TRANSPARENCY_SWITCH Script { eventIn SFBool set_transparency eventOut SFFloat transparency_changed url "javascript: function set_transparency(value) { if (value) transparency_changed = 0.7; else transparency_changed = 0.0; }" }
+
+      # --- ROUTING STATEMENTS (CRITICAL for Simulink Connectivity) ---
+      ROUTE reactor_color_input_simulink TO REACTOR_BODY_INSTANCE.reactor_color_input
+      ROUTE reactor_transparency_input_simulink TO REACTOR_BODY_INSTANCE.reactor_transparency_input
+
+      ROUTE liquid_level_input_simulink TO LIQUID.translation
+      ROUTE liquid_transparency_input_simulink TO LIQUID_MATERIAL_NODE.transparency
+
+      ROUTE agitator_rotation_input_simulink TO AGITATOR.rotation
+      ROUTE valve_knob_rotation_input_simulink TO VALVE_KNOB.rotation
+
+      ROUTE temp_sensor_scale_input_simulink TO TEMP_SENSOR.scale
+      ROUTE press_sensor_scale_input_simulink TO PRESS_SENSOR.scale
     ]
   }
 }
-
-# --- REACTOR BODY INSTANTIATION ---
-# This line creates an instance of the 'DynamicReactorBody' PROTO in the scene.
-# Its internal PROTO fields (reactor_color_input, reactor_transparency_input) will be
-# connected to the top-level Simulink fields via ROUTE statements at the end of the file.
-DEF REACTOR_BODY_INSTANCE DynamicReactorBody { }
-
-# --- AGITATOR (Mixer) ---
-# Defines the agitator shaft and blades. Its rotation property is exposed for dynamic control via ROUTE.
-DEF AGITATOR Transform {
-  translation 0 1 0
-  rotation 0 1 0 0 # Default rotation (will be dynamically updated by ROUTE)
-  children [
-    Transform { translation 0 1.5 0 children [ Shape { appearance Appearance { material USE AGITATOR_SHAFT_MATERIAL } geometry Cylinder { height 3.0 radius 0.1 } } ] }
-    Transform { translation 0 0 0 rotation 0 1 0 0.785 children [ Shape { appearance Appearance { material USE AGITATOR_BLADE_MATERIAL } geometry Box { size 1.5 0.1 0.5 } } ] }
-    Transform { translation 0 0 0 rotation 0 1 0 2.356 children [ Shape { appearance Appearance { material USE AGITATOR_BLADE_MATERIAL } geometry Box { size 1.5 0.1 0.5 } } ] }
-  ]
-}
-
-# --- LIQUID (Inside Reactor) ---
-# Defines the liquid within the reactor. Its position (level) and transparency
-# are exposed for dynamic control via ROUTE.
-DEF LIQUID Transform {
-  translation 0 -1 0 # Default position (Y-axis translation will be dynamically updated by ROUTE)
-  children [
-    Shape {
-      appearance Appearance {
-        # Define (DEF) the material node for the liquid so its transparency can be ROUTEd to.
-        material DEF LIQUID_MATERIAL_NODE Material {
-          diffuseColor 0.2 0.6 1.0
-          transparency 0.5 # Default transparency (will be dynamically updated by ROUTE)
-        }
-      }
-      geometry Cylinder { height 2.0 radius 1.9 }
-    }
-  ]
-}
-
-# --- PIPES and VALVES ---
-# Defines the inlet and outlet pipe structures, including instances of the Valve PROTO.
-DEF INLET_PIPE Transform { translation -2.0 2.0 0 rotation 0 0 1 1.57 children [ Valve { position 0 0 0.5 size 0.15 } Shape { appearance Appearance { material USE PIPE_MATERIAL } geometry Cylinder { height 1.0 radius 0.2 } } Transform { translation 0 0 0.5 children [ Shape { appearance Appearance { material USE PIPE_MATERIAL } geometry Sphere { radius 0.15 } } ] } ] }
-
-# --- VALVE KNOB ---
-# Defines the valve knob. Its rotation property is exposed for dynamic control via ROUTE.
-DEF VALVE_KNOB Transform {
-  translation -2.0 2.8 0
-  rotation 0 1 0 0 # Default rotation (will be dynamically updated by ROUTE)
-  children [ Shape { appearance Appearance { material USE PIPE_MATERIAL } geometry Sphere { radius 0.2 } } ]
-}
-
-DEF OUTLET_PIPE Transform { translation 2.0 -2.0 0 rotation 0 0 1 1.57 children [ Valve { position 0 0 -0.6 size 0.15 } Shape { appearance Appearance { material USE PIPE_MATERIAL } geometry Cylinder { height 1.0 radius 0.2 } } Transform { translation 0 0 -0.6 children [ Shape { appearance Appearance { material USE PIPE_MATERIAL } geometry Sphere { radius 0.15 } } ] } ] }
-
-# --- SENSORS ---
-# Defines the temperature and pressure sensors. Their scale properties are exposed for dynamic control via ROUTE.
-DEF TEMP_SENSOR Transform {
-  translation 0 0 2.2
-  scale 1 1 1 # Default scale (will be dynamically updated by ROUTE)
-  children [
-    Shape { appearance Appearance { material USE SENSOR_MATERIAL } geometry Sphere { radius 0.2 } }
-    Transform { translation 0 0 -0.5 children [ Shape { appearance Appearance { material USE SENSOR_MATERIAL } geometry Cylinder { height 1.0 radius 0.05 } } ] }
-  ]
-}
-
-# Inline nodes are used to include other VRML files (housing, base, flange) into this main scene.
-# IMPORTANT: These URLs must point to publicly accessible raw content on GitHub.
-# Since Melda is updating both repos, these URLs can point to either her repo or Prince's.
-# For consistency and original structure, we keep them pointing to Prince's repo.
-DEF SENSOR_HOUSING Transform { translation 0 0 2.2 children [ Inline { url "https://raw.githubusercontent.com/Prince10107/ASimVR/main/housing.wrl" } ] }
-
-DEF PRESS_SENSOR Transform {
-  translation 0 2.7 0
-  scale 1 1 1 # Default scale (will be dynamically updated by ROUTE)
-  children [ Shape { appearance Appearance { material USE SENSOR_MATERIAL } geometry Box { size 0.4 0.4 0.4 } } ]
-}
-
-# --- BASE ELEMENTS ---
-# Defines the base structures for the reactor.
-DEF REACTOR_BASE Transform { translation 0 -2.7 0 children [ Shape { appearance Appearance { material USE BASE_MATERIAL } geometry Cylinder { height 0.4 radius 2.5 } } ] }
-DEF REACTOR_BASE_DETAILED Transform { translation 0 -2.7 0 children [ Inline { url "https://raw.githubusercontent.com/Prince10107/ASimVR/main/base.wrl" } ] }
-DEF FLANGE Transform { translation 0 -2.5 0 children [ Inline { url "https://raw.githubusercontent.com/Prince10107/ASimVR/main/flange.wrl" } ] }
-
-# --- VIEWPOINT & MISC ---
-# Defines the initial camera position for viewing the model.
-DEF INITIAL_VIEWPOINT Viewpoint { position 0 0 50.0 orientation 0 0 1 0 fieldOfView 0.785398 description "Initial View" }
-# ProximitySensor can detect when the user's viewpoint enters/leaves a defined region.
-DEF REACTOR_PROXIMITY ProximitySensor { size 10 10 10 center 0 0 0 }
-# This Script node is an example of VRML-internal scripting, not directly used by Simulink VR Sink,
-# but shows how VRML itself can react to internal events.
-DEF REACTOR_TRANSPARENCY_SWITCH Script { eventIn SFBool set_transparency eventOut SFFloat transparency_changed url "javascript: function set_transparency(value) { if (value) transparency_changed = 0.7; else transparency_changed = 0.0; }" }
-
-# --- ROUTING STATEMENTS (CRITICAL for Simulink Connectivity) ---
-# ROUTE statements define how events (data changes) flow between nodes in the VRML scene.
-# In this case, they connect the top-level 'field' inputs (which Simulink's VR Sink will set)
-# to the specific dynamic properties (fields) of the 3D objects in the scene.
-# This is the mechanism by which Simulink controls the visual aspects of the VRML model dynamically.
-ROUTE reactor_color_input_simulink TO REACTOR_BODY_INSTANCE.reactor_color_input
-ROUTE reactor_transparency_input_simulink TO REACTOR_BODY_INSTANCE.reactor_transparency_input
-
-ROUTE liquid_level_input_simulink TO LIQUID.translation
-ROUTE liquid_transparency_input_simulink TO LIQUID_MATERIAL_NODE.transparency
-
-ROUTE agitator_rotation_input_simulink TO AGITATOR.rotation
-ROUTE valve_knob_rotation_input_simulink TO VALVE_KNOB.rotation
-
-ROUTE temp_sensor_scale_input_simulink TO TEMP_SENSOR.scale
-ROUTE press_sensor_scale_input_simulink TO PRESS_SENSOR.scale
