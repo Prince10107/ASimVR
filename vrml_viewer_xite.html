@@ -10,55 +10,55 @@
         /* Custom CSS for layout and aesthetics, complementing Tailwind */
         body {
             margin: 0;
-            overflow: hidden; /* Hide scrollbar for a clean look */
-            font-family: 'Inter', sans-serif; /* Recommended font */
-            background-color: #f0f0f0; /* Light grey background */
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f0f0;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh; /* Ensure full viewport height */
         }
         /* Styling for the X_ITE VRML canvas itself */
         x3d-canvas {
-            display: block; /* Ensures it takes up space */
-            width: 95vw; /* Fluid width, responsive */
-            max-width: 1000px; /* Max width for larger screens */
-            height: calc(100vh - 120px); /* Adjust height to accommodate messages/controls */
-            border-radius: 12px; /* Rounded corners for modern look */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Pronounced shadow for depth */
-            background-color: #ffffff; /* Canvas background */
-            /* Override X_ITE's own default styles if necessary */
+            display: block;
+            width: 95vw;
+            max-width: 1000px;
+            height: calc(100vh - 120px);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            background-color: #ffffff;
             --x3d-canvas-background: transparent;
-            margin-top: 20px; /* Space from top */
-            margin-bottom: 20px; /* Space from bottom */
+            margin-top: 20px;
+            margin-bottom: 20px;
         }
         /* Styling for the transient message box */
         #message-box {
-            position: fixed; /* Use fixed for consistent positioning */
+            position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(255, 255, 255, 0.95); /* Slightly less transparent */
+            background-color: rgba(255, 255, 255, 0.95);
             padding: 12px 25px;
-            border-radius: 10px; /* Slightly more rounded */
+            border-radius: 10px;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
             z-index: 1000;
             opacity: 0;
-            transition: opacity 0.6s ease-in-out; /* Smoother transition */
-            font-size: 1em; /* Slightly larger font */
+            transition: opacity 0.6s ease-in-out;
+            font-size: 1em;
             color: #333;
             text-align: center;
-            max-width: 90vw; /* Responsive width */
+            max-width: 90vw;
         }
         #message-box.show {
             opacity: 1;
         }
     </style>
-    <!-- Load X_ITE library from CDN as an ES module -->
-    <!-- X_ITE is a modern VRML/X3D viewer for web browsers. -->
+    <!-- Loading the X_ITE library from jsDelivr CDN as an ES Module, as per official documentation (x_ite@11.5.11). -->
     <script type="module">
-        import X3D from "https://cdn.jsdelivr.net/npm/x_ite@11.5.10/dist/x_ite.min.mjs";
+        import X3D from "https://cdn.jsdelivr.net/npm/x_ite@11.5.11/dist/x_ite.min.mjs";
         // The X3D object doesn't need to be explicitly used here;
         // its mere import ensures the custom element <x3d-canvas> is registered.
     </script>
@@ -67,14 +67,13 @@
 
     <div id="message-box"></div>
 
-    <!-- Use the x3d-canvas element to load the VRML model -->
-    <!-- IMPORTANT: The 'src' attribute MUST point to the raw GitHub URL of your main VRML file. -->
-    <!-- Assuming your main VRML file is named 'reactor.wrl' and is in the 'main' branch of your repo. -->
-    <x3d-canvas id="vrmlViewer" src="https://raw.githubusercontent.com/Prince10107/ASimVR/main/reactor.wrl" antialias="true" showLog="false"></x3d-canvas>
+    <!-- Using the x3d-canvas element to load the VRML model. -->
+    <!-- The 'src' attribute MUST point to the raw GitHub URL of your main VRML file. -->
+   <x3d-canvas id="vrmlViewer" src="https://raw.githubusercontent.com/Prince10107/ASimVR/main/reactor.wrl" antialias="true" showLog="false"></x3d-canvas>
 
     <script type="module">
         // Function to display transient messages to the user
-        const showMessage = (message, duration = 4000) => { // Increased duration
+        const showMessage = (message, duration = 4000) => {
             const msgBox = document.getElementById('message-box');
             msgBox.textContent = message;
             msgBox.classList.add('show');
@@ -88,14 +87,14 @@
 
         // Event listener for when the VRML model is successfully loaded
         vrmlViewer.addEventListener('load', () => {
-            showMessage('VRML model loaded successfully! Use your mouse to navigate.', 5000);
-            console.log('X_ITE: VRML model loaded.');
+            showMessage('VRML model loaded successfully! Use your mouse to navigate the 3D scene.', 5000);
+            console.log('X_ITE: VRML model loaded successfully.');
         });
 
         // Event listener for errors during model loading
         vrmlViewer.addEventListener('error', (event) => {
             console.error('X_ITE: Error loading VRML model:', event);
-            showMessage('Error loading VRML model! Please check the file path, format, and GitHub accessibility.', 8000); // More descriptive error
+            showMessage('Error loading VRML model! Please ensure model.wrl is correctly structured and accessible on GitHub.', 8000);
         });
 
         // Initial message when the page starts loading
@@ -105,3 +104,6 @@
     </script>
 </body>
 </html>
+
+    
+    
